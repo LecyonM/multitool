@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Multitool : quadrille">
+  <rect width="512" height="512" rx="112" fill="#12202b"/>
+  <rect x="95" y="95" width="145" height="145" rx="32" fill="#4fd1c5"/>
+  <rect x="280.5" y="103.5" width="128" height="128" rx="26" fill="none" stroke="#4fd1c5" stroke-width="17"/>
+  <rect x="103.5" y="280.5" width="128" height="128" rx="26" fill="none" stroke="#4fd1c5" stroke-width="17"/>
+  <rect x="272" y="272" width="145" height="145" rx="32" fill="#4fd1c5"/>
+</svg>

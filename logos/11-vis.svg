@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Multitool : vis">
+  <rect width="512" height="512" rx="112" fill="#1d3557"/>
+  <defs><clipPath id="tete"><circle cx="256" cy="256" r="152"/></clipPath></defs>
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#2f5588" stroke-width="10"/>
+  <circle cx="256" cy="256" r="152" fill="#e9eef2"/>
+  <g clip-path="url(#tete)"><rect x="-24" y="-200" width="48" height="400" fill="#1d3557" transform="translate(256 256) rotate(38)"/></g>
+  <circle cx="256" cy="256" r="152" fill="none" stroke="#b8c7d6" stroke-width="8"/>
+</svg>

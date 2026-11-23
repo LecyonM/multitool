@@ -1,0 +1,20 @@
+[package]
+name = "multitool-app"
+description = "Application de bureau Multitool (Tauri)"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "multitool"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde.workspace = true
+serde_json.workspace = true
+multitool-core = { path = "../crates/core" }
+multitool-utilities = { path = "../crates/utilities" }
+tauri-plugin-dialog = "2"

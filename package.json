@@ -1,0 +1,16 @@
+{
+  "name": "multitool",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Logiciel regroupant plusieurs utilitaires",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "test": "cargo test",
+    "check:ui": "node --check ui/js/app.js && node --check ui/js/theme.js",
+    "logo": "node scripts/set-logo.mjs"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

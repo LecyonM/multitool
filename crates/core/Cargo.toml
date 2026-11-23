@@ -1,0 +1,9 @@
+[package]
+name = "multitool-core"
+description = "Noyau de Multitool : contrat des utilitaires et registre"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Multitool : cube">
+  <rect width="512" height="512" rx="112" fill="#0e1a22"/>
+  <polygon points="256,84 404,170 256,256 108,170" fill="#7ee0d4" stroke="#0e1a22" stroke-width="10" stroke-linejoin="round"/>
+  <polygon points="108,170 256,256 256,428 108,342" fill="#1aa89b" stroke="#0e1a22" stroke-width="10" stroke-linejoin="round"/>
+  <polygon points="404,170 404,342 256,428 256,256" fill="#0b6f68" stroke="#0e1a22" stroke-width="10" stroke-linejoin="round"/>
+  <polygon points="256,128 318,164 256,200 194,164" fill="#f5b942"/>
+</svg>

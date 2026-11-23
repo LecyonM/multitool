@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr" data-theme="light" data-contrast="normal">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multitool</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Appliqué avant l'affichage pour éviter un flash de mauvais thème. -->
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="img/logo.svg" alt="" width="32" height="32">
+        <span class="brand-name">Multitool</span>
+      </div>
+
+      <div class="controls">
+        <label class="control" for="theme-select">
+          <span>Thème</span>
+          <select id="theme-select">
+            <option value="auto">Automatique</option>
+            <option value="light">Clair</option>
+            <option value="dark">Sombre</option>
+          </select>
+        </label>
+        <button type="button" id="contrast-toggle" class="btn btn-toggle" aria-pressed="false">
+          <span class="switch" aria-hidden="true"></span>
+          Contraste élevé
+        </button>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Utilitaires">
+      <div class="search">
+        <label class="sr-only" for="search">Rechercher un utilitaire</label>
+        <input type="search" id="search" placeholder="Rechercher (Ctrl+K)" autocomplete="off" spellcheck="false">
+      </div>
+      <nav id="utility-nav" aria-label="Liste des utilitaires"></nav>
+    </aside>
+
+    <main id="main" class="main" tabindex="-1">
+      <p id="banner" class="banner" role="status" hidden></p>
+
+      <section id="empty-state" class="empty">
+        <h1>Choisissez un utilitaire</h1>
+        <p>La liste se trouve à gauche. Ctrl+K permet de la filtrer au clavier.</p>
+      </section>
+
+      <section id="utility-panel" hidden>
+        <header class="panel-head">
+          <p id="utility-category" class="panel-category"></p>
+          <h1 id="utility-title" class="panel-title"></h1>
+          <p id="utility-description" class="panel-description"></p>
+        </header>
+
+        <div class="workspace">
+          <form id="utility-form" class="form" autocomplete="off" novalidate>
+            <div id="utility-fields"></div>
+            <button type="submit" id="run-button" class="btn btn-primary">Exécuter</button>
+          </form>
+
+          <!-- Pas d'aria-live ici : la progression changerait plusieurs fois par seconde.
+               Le début et la fin de l'exécution sont annoncés via #announce. -->
+          <section id="readout" class="readout" aria-labelledby="readout-title">
+            <div class="readout-head">
+              <h2 id="readout-title" class="readout-title">Résultat</h2>
+              <button type="button" id="copy-result" class="btn btn-ghost" hidden>Copier le résultat</button>
+            </div>
+            <div id="readout-body" class="readout-body"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <p id="announce" class="sr-only" role="status" aria-live="polite"></p>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>

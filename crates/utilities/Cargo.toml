@@ -1,0 +1,12 @@
+[package]
+name = "multitool-utilities"
+description = "Utilitaires de Multitool (un fichier par utilitaire dans src/modules)"
+version.workspace = true
+edition.workspace = true
+build = "build.rs"
+
+[dependencies]
+multitool-core = { path = "../core" }
+ureq = "3"
+serde_json.workspace = true
+dns-lookup = "2"

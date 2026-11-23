@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Multitool : mallette">
+  <rect width="512" height="512" rx="112" fill="#f6d9b0"/>
+  <path d="M188 204 V172 a30 30 0 0 1 30 -30 H294 a30 30 0 0 1 30 30 V204" fill="none" stroke="#e4572e" stroke-width="28" stroke-linejoin="round"/>
+  <rect x="92" y="200" width="328" height="196" rx="38" fill="#e4572e"/>
+  <path d="M92 270 H420" stroke="#b73f1c" stroke-width="10"/>
+  <rect x="224" y="246" width="64" height="48" rx="12" fill="#f6d9b0"/>
+  <circle cx="256" cy="270" r="9" fill="#e4572e"/>
+  <rect x="130" y="326" width="78" height="22" rx="11" fill="#b73f1c"/>
+  <rect x="304" y="326" width="78" height="22" rx="11" fill="#b73f1c"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Multitool : monogramme M">
+  <rect width="512" height="512" rx="112" fill="#2f2a8a"/>
+  <path d="M124 384 V142 L256 306 L388 142 V384" fill="none" stroke="#ffffff" stroke-width="58" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="176" r="24" fill="#f5b942"/>
+</svg>
