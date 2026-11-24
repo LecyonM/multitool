@@ -4,5 +4,6 @@
   ajouter une entrée datée (la plus récente en premier) dans « Journal des modifications »
   et corriger les sections concernées (structure, utilitaires disponibles, etc.).
 - Ajouter un utilitaire = créer un fichier dans `crates/utilities/src/modules/` (voir le README). Rien d'autre à modifier.
+- **Ne jamais ajouter un utilitaire de sa propre initiative** : demander d'abord l'avis de l'utilisateur (consigne explicite).
 - Interface et README en français.
 - Avant de livrer : `cargo test`, `cargo fmt --all --check` et `cargo clippy --workspace --all-targets`.

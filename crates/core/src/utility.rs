@@ -7,7 +7,7 @@ use serde_json::Value;
 /// Informations affichées dans la liste des utilitaires.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UtilityInfo {
-    /// Identifiant unique et stable (ex. `text_stats`).
+    /// Identifiant unique et stable (ex. `video_downloader`).
     pub id: String,
     pub name: String,
     pub description: String,

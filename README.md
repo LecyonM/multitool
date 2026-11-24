@@ -13,6 +13,7 @@ Logiciel de bureau regroupant plusieurs utilitaires dans une seule interface.
 - [Structure du projet](#structure-du-projet)
 - [Utilitaires disponibles](#utilitaires-disponibles)
 - [Scanner de réseau et scanner de ports](#scanner-de-réseau-et-scanner-de-ports)
+- [Traducteur](#traducteur)
 - [Ajouter un utilitaire](#ajouter-un-utilitaire)
 - [Interface et modes d'affichage](#interface-et-modes-daffichage)
 - [Logo](#logo)
@@ -83,13 +84,12 @@ multitool/
 
 | Identifiant | Nom | Catégorie | Rôle |
 |---|---|---|---|
-| `text_stats` | Statistiques de texte | Texte | Compte caractères, mots, lignes et phrases |
-| `case_converter` | Convertisseur de casse | Texte | MAJUSCULES, minuscules, Titre, snake_case, kebab-case, camelCase, PascalCase |
 | `video_downloader` | Téléchargeur de vidéo | Internet | Télécharge une vidéo depuis un lien, avec barre d'avancement (voir ci-dessous) |
 | `network_scanner` | Scanner de réseau | Réseau | Liste les machines allumées d'un réseau (`192.168.1.0/24`), avec nom et adresse MAC |
 | `port_scanner` | Scanner de ports | Réseau | Teste les ports TCP d'une machine (de quelques ports aux 65 535) et liste les ports ouverts |
+| `translator` | Traducteur | Texte | Traduit un texte entre plus de 60 langues, avec détection de la langue d'origine (internet requis) |
 
-Les deux utilitaires de texte servent d'exemples fonctionnels. Ils peuvent être modifiés ou supprimés librement.
+**Règle de travail** : aucun utilitaire n'est ajouté sans l'accord préalable de l'utilisateur (voir `CLAUDE.md`).
 
 ## Téléchargeur de vidéo
 
@@ -156,6 +156,24 @@ Ils n'envoient donc pas de paquets bruts comme `nmap -sS` ; ils détectent moins
 
 Le tableau des résultats (`Output::with_grid`) s'affiche en pleine largeur sous le formulaire ; « Copier le résultat » le copie
 séparé par des tabulations, prêt à coller dans un tableur.
+
+## Traducteur
+
+Dossier `crates/utilities/src/modules/translator/`. Traduit un texte entre **65 langues**, des plus parlées au monde
+(anglais, chinois mandarin, hindi, espagnol, français, arabe, bengali, portugais, russe, ourdou, indonésien, allemand, japonais…)
+à des langues moins répandues (liste dans `languages.rs`, classée par nombre de locuteurs).
+
+- Champs : texte, langue d'origine (« Détecter la langue » par défaut), langue de destination (français par défaut),
+  adresse e-mail facultative.
+- **Service utilisé** : [MyMemory](https://mymemory.translated.net), gratuit, sans compte ni clé. **Internet est nécessaire** et le texte
+  saisi est envoyé à ce service. D'après sa documentation, la limite gratuite est de l'ordre de quelques milliers de caractères par jour
+  sans adresse e-mail, et nettement plus haute en en indiquant une (champ facultatif) ; quand elle est atteinte, un message l'explique.
+  La qualité est correcte pour des phrases courantes, moins bonne que les grands services payants.
+- Les textes jusqu'à 10 000 caractères sont découpés en morceaux de 450 octets (limite du service), coupés entre les phrases ;
+  la mise en page (sauts de ligne, espaces) est conservée et la barre de progression indique « partie N sur M ».
+- Pour les essais, la variable d'environnement `MULTITOOL_TRANSLATE_URL` remplace l'adresse du service.
+- **Non vérifié** : un appel réel au service MyMemory (le poste de développement n'a pas accès à internet en dehors de quelques sites) ;
+  le format des réponses est celui de sa documentation et testé contre un faux serveur local.
 
 ## Ajouter un utilitaire
 
@@ -390,6 +408,8 @@ Une entrée par tâche ou modification, la plus récente en premier.
 
 ### 2026-11-24
 
+- **Utilitaires de texte supprimés** à la demande de l'utilisateur : « Statistiques de texte » et « Convertisseur de casse » (ajoutés au départ comme simples exemples) sont retirés complètement (code, tests, documentation). Nouvelle règle dans `CLAUDE.md` : **demander l'avis de l'utilisateur avant d'ajouter tout utilitaire**.
+- **Traducteur** (catégorie Texte) : voir [Traducteur](#traducteur). 65 langues, détection automatique de la langue d'origine, découpage des longs textes avec barre de progression, quota et pannes expliqués en français. Testé contre un faux service MyMemory local (accents, émojis, caractères spéciaux, textes longs, quota, panne, service injoignable).
 - **Récupération de l'installateur simplifiée** : le zip de l'artefact `multitool-windows` contenait le `.exe` au fond de sous-dossiers (`release/bundle/nsis/`), difficile à trouver. Le workflow copie maintenant les installateurs dans un dossier à plat : le `.exe` est à la racine du zip.
 - **Test complet dans l'application réelle** (pilotée par WebDriver, 5 utilitaires, 4 modes d'affichage) : environ 85 contrôles, tous réussis après les corrections ci-dessous. Couvre la liste et la recherche, les deux scanners (réseau local, plage, adresse publique refusée, saisies invalides, barre de progression qui avance sans reculer, bannière lue, 65 535 ports en 0,4 s en local), le téléchargeur de vidéo (23 contrôles, fichier identique à la source) et le contraste mesuré du tableau dans les 4 modes.
 - **Corrigé** : (1) en mode contraste élevé, le bouton « Contraste élevé » devenait illisible quand la souris le survolait (fond écrasé par le survol générique des boutons, texte de la même couleur) ; (2) après un tableau de résultats suivi d'une erreur, la mise en page « tableau pleine largeur » restait active ; (3) le scanner de réseau affiche maintenant un avertissement quand presque toutes les adresses semblent répondre sans aucun ping (un pare-feu ou un proxy répond alors à la place des machines : constaté sur le poste de test, où un réseau inexistant paraissait entièrement actif). 88 tests, clippy et mise en forme propres.
