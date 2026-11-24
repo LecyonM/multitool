@@ -1974,7 +1974,7 @@ dependencies = [
 
 [[package]]
 name = "multitool-app"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "multitool-core",
  "multitool-utilities",
@@ -1987,7 +1987,7 @@ dependencies = [
 
 [[package]]
 name = "multitool-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -1995,7 +1995,7 @@ dependencies = [
 
 [[package]]
 name = "multitool-utilities"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "dns-lookup",
  "multitool-core",

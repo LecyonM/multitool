@@ -408,6 +408,7 @@ Une entrée par tâche ou modification, la plus récente en premier.
 
 ### 2026-11-24
 
+- **Version 0.1.1** : toutes les compilations produisaient le même nom de fichier (`Multitool_0.1.0_x64-setup.exe`), ce qui rendait impossible de savoir si l'on avait installé la dernière. Le numéro de version est relevé à chaque changement visible ; le nom du fichier (`Multitool_0.1.1_x64-setup.exe`) indique la version. Le numéro s'affiche aussi dans « Applications installées » de Windows.
 - **Utilitaires de texte supprimés** à la demande de l'utilisateur : « Statistiques de texte » et « Convertisseur de casse » (ajoutés au départ comme simples exemples) sont retirés complètement (code, tests, documentation). Nouvelle règle dans `CLAUDE.md` : **demander l'avis de l'utilisateur avant d'ajouter tout utilitaire**.
 - **Traducteur** (catégorie Texte) : voir [Traducteur](#traducteur). 65 langues, détection automatique de la langue d'origine, découpage des longs textes avec barre de progression, quota et pannes expliqués en français. Testé contre un faux service MyMemory local (accents, émojis, caractères spéciaux, textes longs, quota, panne, service injoignable).
 - **Récupération de l'installateur simplifiée** : le zip de l'artefact `multitool-windows` contenait le `.exe` au fond de sous-dossiers (`release/bundle/nsis/`), difficile à trouver. Le workflow copie maintenant les installateurs dans un dossier à plat : le `.exe` est à la racine du zip.
