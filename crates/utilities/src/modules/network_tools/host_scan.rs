@@ -139,12 +139,17 @@ impl Utility for NetworkScanner {
             ("Machines actives".to_string(), format!("{} sur {total}", found.len())),
             ("Durée".to_string(), format_duration(started.elapsed().as_secs_f64())),
         ]);
+        let tcp_only = found.iter().filter(|(_, via)| via.starts_with("TCP")).count();
+        let suspicious = looks_like_a_catch_all(total, tcp_only);
         output = if found.is_empty() {
             output.with_text("Aucune machine n'a répondu. Vérifiez l'adresse du réseau et votre connexion ; une machine protégée par un pare-feu strict peut rester invisible.")
         } else {
-            output.with_grid(grid).with_text(
-                "Les adresses MAC ne sont visibles que sur votre réseau local. Une machine dont le pare-feu bloque tout peut ne pas apparaître.",
-            )
+            let note = if suspicious {
+                "Attention : presque toutes les adresses semblent répondre, aucune au ping. Un pare-feu, un routeur ou un proxy répond probablement à la place des machines : ces résultats ne sont pas fiables. Vérifiez l'adresse du réseau."
+            } else {
+                "Les adresses MAC ne sont visibles que sur votre réseau local. Une machine dont le pare-feu bloque tout peut ne pas apparaître."
+            };
+            output.with_grid(grid).with_text(note)
         };
         progress(ProgressUpdate::new(1.0, "Scan terminé"));
         Ok(output)
@@ -167,6 +172,12 @@ fn probe(ip: Ipv4Addr) -> Option<String> {
         }
     }
     None
+}
+
+/// Quand au moins 90 % d'un réseau d'une certaine taille « répond » uniquement par des refus de
+/// connexion TCP, c'est presque toujours un équipement intermédiaire qui répond à la place des machines.
+fn looks_like_a_catch_all(total: usize, tcp_only: usize) -> bool {
+    total >= 16 && tcp_only * 10 >= total * 9
 }
 
 static PING_MISSING: AtomicBool = AtomicBool::new(false);
@@ -255,6 +266,14 @@ mod tests {
         let input = Input::new().with("target", "8.8.8.8");
         let error = NetworkScanner.run(&input).unwrap_err().to_string();
         assert!(error.contains("autorisation"), "{error}");
+    }
+
+    #[test]
+    fn a_network_where_everything_answers_is_flagged() {
+        assert!(looks_like_a_catch_all(254, 254));
+        assert!(looks_like_a_catch_all(254, 230));
+        assert!(!looks_like_a_catch_all(254, 12));
+        assert!(!looks_like_a_catch_all(4, 4), "trop peu d'adresses pour conclure");
     }
 
     #[test]

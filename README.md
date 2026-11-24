@@ -388,6 +388,11 @@ version écrite dans `src-tauri/tauri.conf.json`). Réglages dans `bundle.window
 
 Une entrée par tâche ou modification, la plus récente en premier.
 
+### 2026-11-24
+
+- **Test complet dans l'application réelle** (pilotée par WebDriver, 5 utilitaires, 4 modes d'affichage) : environ 85 contrôles, tous réussis après les corrections ci-dessous. Couvre la liste et la recherche, les deux scanners (réseau local, plage, adresse publique refusée, saisies invalides, barre de progression qui avance sans reculer, bannière lue, 65 535 ports en 0,4 s en local), le téléchargeur de vidéo (23 contrôles, fichier identique à la source) et le contraste mesuré du tableau dans les 4 modes.
+- **Corrigé** : (1) en mode contraste élevé, le bouton « Contraste élevé » devenait illisible quand la souris le survolait (fond écrasé par le survol générique des boutons, texte de la même couleur) ; (2) après un tableau de résultats suivi d'une erreur, la mise en page « tableau pleine largeur » restait active ; (3) le scanner de réseau affiche maintenant un avertissement quand presque toutes les adresses semblent répondre sans aucun ping (un pare-feu ou un proxy répond alors à la place des machines : constaté sur le poste de test, où un réseau inexistant paraissait entièrement actif). 88 tests, clippy et mise en forme propres.
+
 ### 2026-11-23
 
 - **Scanner de réseau et scanner de ports** (catégorie Réseau, dossier `network_tools/`) : voir [Scanner de réseau et scanner de ports](#scanner-de-réseau-et-scanner-de-ports). Le noyau gagne `Grid` / `Output::with_grid` (tableau à colonnes) et l'interface l'affiche en pleine largeur, focalisable au clavier, copiable vers un tableur ; vérifié dans les quatre modes d'affichage (une première version coupait les colonnes dans le panneau étroit : le tableau passe maintenant sous le formulaire). Vérifié : 87 tests, clippy et mise en forme propres. Le `ping` n'existe pas sur le poste de développement : le chemin « ping » n'a pas été essayé en réel, la détection par TCP et ARP l'a été.

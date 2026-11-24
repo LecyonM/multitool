@@ -442,6 +442,7 @@
     state.lastText = '';
     els.readoutTitle.textContent = 'Résultat';
     els.readout.classList.add('is-error');
+    els.readout.closest('.workspace')?.classList.remove('has-grid');
     els.readoutBody.replaceChildren(
       h(
         'div',

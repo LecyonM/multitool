@@ -515,6 +515,13 @@ textarea {
   color: var(--on-accent);
 }
 
+/* Sans cette règle, le survol générique des boutons (fond clair) écraserait le fond de
+   l'interrupteur activé : texte de la même couleur que le fond, donc invisible. */
+.btn-toggle[aria-pressed="true"]:hover:not(:disabled) {
+  background: var(--accent);
+  filter: brightness(1.08);
+}
+
 .btn-toggle[aria-pressed="true"] .switch::after {
   left: auto;
   right: 2px;
@@ -785,7 +792,8 @@ textarea {
     border: 2px solid CanvasText;
   }
 
-  .btn-toggle[aria-pressed="true"] {
+  .btn-toggle[aria-pressed="true"],
+  .btn-toggle[aria-pressed="true"]:hover:not(:disabled) {
     background: Highlight;
     color: HighlightText;
   }
