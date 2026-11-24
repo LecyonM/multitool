@@ -390,6 +390,7 @@ Une entrée par tâche ou modification, la plus récente en premier.
 
 ### 2026-11-24
 
+- **Récupération de l'installateur simplifiée** : le zip de l'artefact `multitool-windows` contenait le `.exe` au fond de sous-dossiers (`release/bundle/nsis/`), difficile à trouver. Le workflow copie maintenant les installateurs dans un dossier à plat : le `.exe` est à la racine du zip.
 - **Test complet dans l'application réelle** (pilotée par WebDriver, 5 utilitaires, 4 modes d'affichage) : environ 85 contrôles, tous réussis après les corrections ci-dessous. Couvre la liste et la recherche, les deux scanners (réseau local, plage, adresse publique refusée, saisies invalides, barre de progression qui avance sans reculer, bannière lue, 65 535 ports en 0,4 s en local), le téléchargeur de vidéo (23 contrôles, fichier identique à la source) et le contraste mesuré du tableau dans les 4 modes.
 - **Corrigé** : (1) en mode contraste élevé, le bouton « Contraste élevé » devenait illisible quand la souris le survolait (fond écrasé par le survol générique des boutons, texte de la même couleur) ; (2) après un tableau de résultats suivi d'une erreur, la mise en page « tableau pleine largeur » restait active ; (3) le scanner de réseau affiche maintenant un avertissement quand presque toutes les adresses semblent répondre sans aucun ping (un pare-feu ou un proxy répond alors à la place des machines : constaté sur le poste de test, où un réseau inexistant paraissait entièrement actif). 88 tests, clippy et mise en forme propres.
 
