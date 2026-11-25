@@ -2146,6 +2146,7 @@ name = "multitool-app"
 version = "0.1.2"
 dependencies = [
  "multitool-core",
+ "multitool-export",
  "multitool-utilities",
  "serde",
  "serde_json",

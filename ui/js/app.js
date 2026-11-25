@@ -33,6 +33,7 @@
 
   const LAST_KEY = 'multitool.last';
   const COPY_LABEL = 'Copier le résultat';
+  const PDF_LABEL = 'Exporter en PDF';
   const FOLDERS_KEY = 'multitool.folders';
   const RUN_LABEL = 'Exécuter';
   const state = {
@@ -40,6 +41,8 @@
     selectedId: null,
     lastText: '',
     lastRun: null,
+    lastOutput: null,
+    pdfTimer: null,
     copyTimer: null,
     runId: 0, // identifie l'exécution en cours : ignore les messages d'une exécution terminée
     running: false,
@@ -323,6 +326,8 @@
 
   function setCopyVisible(visible) {
     window.clearTimeout(state.copyTimer);
+    window.clearTimeout(state.pdfTimer);
+    els.pdf.textContent = PDF_LABEL;
     els.copy.hidden = !visible;
     els.pdf.hidden = !visible;
     els.copy.textContent = COPY_LABEL;
@@ -431,6 +436,7 @@
     if (!nodes.length) nodes.push(h('p', { class: 'readout-idle', text: 'Aucun résultat à afficher.' }));
 
     state.lastText = parts.join('\n\n');
+    state.lastOutput = output;
     els.readoutTitle.textContent = 'Résultat';
     els.readout.classList.remove('is-error');
     // Un tableau à colonnes passe sous le formulaire pour disposer de toute la largeur.
@@ -572,13 +578,12 @@
   const pad = (n) => String(n).padStart(2, '0');
 
   /**
-   * Exporte le résultat en PDF : on construit une feuille de rapport (titre, date, réglages,
-   * résultat) qui n'est visible qu'à l'impression, puis on ouvre la fenêtre d'impression du
-   * système, où l'on choisit « Enregistrer au format PDF ». Le rendu est celui de la fenêtre,
-   * donc toutes les écritures (arabe, chinois, hindi…) s'impriment correctement.
+   * Voie de secours : on construit une feuille de rapport (titre, date, réglages, résultat) visible
+   * uniquement à l'impression, puis on ouvre la fenêtre d'impression du système, où l'on choisit
+   * « Enregistrer au format PDF ». Le rendu est celui de la fenêtre : toutes les écritures
+   * (arabe, chinois, hindi…) s'impriment correctement, ce que le PDF direct ne sait pas faire.
    */
-  function onExportPdf() {
-    if (!state.lastText || !state.lastRun) return;
+  function printReport() {
     document.getElementById('print-sheet')?.remove();
     const { name, params, at } = state.lastRun;
     const when = at.toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
@@ -601,6 +606,52 @@
     };
     window.addEventListener('afterprint', cleanUp);
     window.print();
+  }
+
+  function flashPdfLabel(text) {
+    els.pdf.textContent = text;
+    window.clearTimeout(state.pdfTimer);
+    state.pdfTimer = window.setTimeout(() => (els.pdf.textContent = PDF_LABEL), 3000);
+  }
+
+  /** Nom de fichier proposé, sans caractère interdit sous Windows. */
+  function pdfFileName(name, at) {
+    const stamp = `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())} ${pad(at.getHours())}h${pad(at.getMinutes())}`;
+    return `Multitool - ${name} - ${stamp}`.replace(/[\\/:*?"<>|]/g, '-');
+  }
+
+  /**
+   * Bouton « Exporter en PDF » : boîte « Enregistrer sous », puis le PDF est écrit directement.
+   * Si le résultat contient des écritures que la police intégrée ne dessine pas (arabe, chinois,
+   * hindi…), on passe par la fenêtre d'impression pour ne rien perdre.
+   */
+  async function onExportPdf() {
+    if (!state.lastText || !state.lastRun || !state.lastOutput) return;
+    const { name, at } = state.lastRun;
+    const title = `Multitool : ${name}`;
+    const generatedAt = at.toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
+    const dialog = tauri && tauri.dialog;
+    if (invoke && dialog && dialog.save) {
+      try {
+        const unsupported = await invoke('pdf_coverage', { title, output: state.lastOutput });
+        if (unsupported === 0) {
+          const path = await dialog.save({
+            title: 'Enregistrer le PDF',
+            defaultPath: `${pdfFileName(name, at)}.pdf`,
+            filters: [{ name: 'Document PDF', extensions: ['pdf'] }],
+          });
+          if (!path) return; // annulé par l'utilisateur
+          const saved = await invoke('export_pdf', { title, generatedAt, output: state.lastOutput, path });
+          flashPdfLabel('PDF enregistré');
+          announce(`PDF enregistré : ${saved}`);
+          return;
+        }
+        announce('Ce résultat contient des écritures que le PDF direct ne sait pas dessiner : ouverture de la fenêtre d’impression.');
+      } catch (error) {
+        announce(`Export direct impossible (${error}) : ouverture de la fenêtre d’impression.`);
+      }
+    }
+    printReport();
   }
 
   /* ---------- Thème ---------- */

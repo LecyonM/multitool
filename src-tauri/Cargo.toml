@@ -17,4 +17,5 @@ serde.workspace = true
 serde_json.workspace = true
 multitool-core = { path = "../crates/core" }
 multitool-utilities = { path = "../crates/utilities" }
+multitool-export = { path = "../crates/export" }
 tauri-plugin-dialog = "2"

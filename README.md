@@ -57,10 +57,11 @@ ni modification de la configuration de compilation**. Il suffit de déposer un f
 
 ```
 multitool/
-├── Cargo.toml                  Espace de travail Rust (3 crates)
+├── Cargo.toml                  Espace de travail Rust (4 crates)
 ├── package.json                Outil de compilation Tauri (npm run dev / build)
 ├── crates/
 │   ├── core/                   Contrat des utilitaires et registre (sans interface)
+│   ├── export/                 Export d'un résultat en PDF (police DejaVu intégrée, voir plus bas)
 │   └── utilities/
 │       ├── build.rs            Découverte automatique des modules
 │       └── src/modules/        ← un fichier (ou un dossier) par utilitaire
@@ -178,19 +179,26 @@ Dossier `crates/utilities/src/modules/translator/`. Traduit un texte entre **65 
 
 ## Exporter un résultat en PDF
 
-Le bouton **Exporter en PDF**, à côté de « Copier le résultat », fonctionne pour tous les utilitaires. Il produit un petit rapport :
-titre (nom de l'utilitaire), date et heure, réglages utilisés (ex. le réseau scanné), puis le résultat (récapitulatif, tableau, texte).
+Le bouton **Exporter en PDF**, à côté de « Copier le résultat », fonctionne pour tous les utilitaires. Il produit un rapport A4 :
+titre (nom de l'utilitaire), date et heure, puis le résultat (récapitulatif, tableau à colonnes, texte).
 
-- Il ouvre la fenêtre d'impression du système : choisir **« Enregistrer au format PDF »** (ou « Microsoft Print to PDF » sous Windows) comme imprimante.
-  Le nom de fichier proposé est `Multitool - <outil> - <date et heure>`.
-- Le rapport est toujours noir sur blanc, quel que soit le thème de l'écran ; les tableaux s'étendent sur toute la page, l'en-tête
-  est répété à chaque page et aucune ligne n'est coupée. Le texte long (traduction) garde ses retours à la ligne.
-- Comme le rendu est fait par la fenêtre elle-même, toutes les écritures s'impriment correctement, y compris de droite à gauche
-  (arabe) et le chinois ou le hindi, dans la mesure où une police du système les contient.
-- Le texte à traiter (zone de texte) et l'adresse e-mail ne sont pas repris dans les réglages du rapport.
+**Voie directe (cas normal)** : une boîte « Enregistrer sous » du système s'ouvre (nom proposé : `Multitool - <outil> - <date et heure>.pdf`,
+`.pdf` ajouté si besoin), puis le PDF est écrit directement par l'application (crate `crates/export`, moteur `genpdf`,
+police libre DejaVu Sans intégrée : le PDF s'affiche à l'identique partout). Annuler la boîte n'écrit rien.
+Elle couvre le latin (avec tous les accents), le grec, le cyrillique, l'arménien, le géorgien…
+
+**Voie de secours (impression)** : si le résultat contient des écritures que ce moteur ne sait pas dessiner correctement — arabe, hébreu,
+langues indiennes, thaï, khmer, birman (lettres à assembler ou sens de droite à gauche), chinois, japonais, coréen — le bouton ouvre à la place la fenêtre
+d'impression du système : choisir **« Enregistrer au format PDF »** (ou « Microsoft Print to PDF » sous Windows). Le rendu est alors celui de la
+fenêtre, noir sur blanc, avec les réglages utilisés (ex. le réseau scanné), l'en-tête du tableau répété à chaque page et sans ligne coupée.
+C'est surtout utile pour le Traducteur. Un PDF direct n'est jamais produit avec des caractères remplacés par « ? » sans que l'on en soit prévenu :
+dans ce cas on passe par la voie d'impression.
+
+- Le texte à traiter (zone de texte) et l'adresse e-mail ne sont pas repris dans les réglages du rapport imprimé.
 - Pour un utilitaire futur : rien à faire, le bouton s'applique à tout résultat affiché. La mise en page d'impression est à la fin de `ui/css/style.css`.
-- **Limite connue** : la fenêtre d'impression elle-même n'a pas pu être essayée sur le poste de développement (la mise en page l'a été
-  en générant de vrais PDF de 1 à 3 pages ; l'application réelle a été testée jusqu'à l'appel d'impression).
+- **Limites connues** : (1) dans le PDF direct, l'en-tête d'un long tableau n'est pas répété sur les pages suivantes (le moteur ne le permet pas) ;
+  (2) la boîte « Enregistrer sous » et la fenêtre d'impression du système n'ont pas pu être pilotées sur le poste de développement : elles sont simulées dans les
+  tests, tout le reste (choix de la voie, écriture du fichier, contenu du PDF relu avec `pdftotext`, rendu de pages réelles de 1 à 3 pages) est vérifié.
 
 ## Ajouter un utilitaire
 
@@ -425,7 +433,7 @@ Une entrée par tâche ou modification, la plus récente en premier.
 
 ### 2026-11-25
 
-- **Exporter en PDF** (version 0.1.2) : voir [Exporter un résultat en PDF](#exporter-un-résultat-en-pdf). Demandé parce que le texte copié puis collé dans une note ou un document s'alignait mal. Vérifié sur de vrais PDF : les données d'un scan réel de 11 machines, un tableau de 95 lignes sur 3 pages (en-tête répété), une traduction en arabe, chinois et hindi ; puis dans l'application réelle, dans les 4 modes d'affichage.
+- **Exporter en PDF** (version 0.1.2) : voir [Exporter un résultat en PDF](#exporter-un-résultat-en-pdf). Demandé parce que le texte copié puis collé dans une note ou un document s'alignait mal ; réclamé « directement », donc le PDF est écrit par l'application après une boîte « Enregistrer sous », avec repli sur l'impression pour les écritures que le moteur ne sait pas assembler. Nouveau crate `crates/export`. Vérifié : 5 tests du crate (dont la détection des écritures non gérées : l'arabe a des glyphes dans la police mais serait écrit faussement), PDF réels avec les données d'un scan de 11 machines et de 95 machines (3 pages), titre des métadonnées sans accent cassé, et l'application réelle de bout en bout (enregistrement, annulation, repli chinois, lisibilité du bouton dans les 4 modes d'affichage).
 
 ### 2026-11-24
 
