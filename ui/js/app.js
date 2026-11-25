@@ -25,6 +25,7 @@
     readoutBody: $('#readout-body'),
     readoutTitle: $('#readout-title'),
     copy: $('#copy-result'),
+    pdf: $('#export-pdf'),
     themeSelect: $('#theme-select'),
     contrast: $('#contrast-toggle'),
     announce: $('#announce'),
@@ -38,6 +39,7 @@
     utilities: [],
     selectedId: null,
     lastText: '',
+    lastRun: null,
     copyTimer: null,
     runId: 0, // identifie l'exécution en cours : ignore les messages d'une exécution terminée
     running: false,
@@ -322,6 +324,7 @@
   function setCopyVisible(visible) {
     window.clearTimeout(state.copyTimer);
     els.copy.hidden = !visible;
+    els.pdf.hidden = !visible;
     els.copy.textContent = COPY_LABEL;
   }
 
@@ -494,7 +497,10 @@
     els.readout.removeAttribute('aria-busy');
     syncRunButton();
 
-    if (outcome.output) rememberFolders(utility, values);
+    if (outcome.output) {
+      rememberFolders(utility, values);
+      state.lastRun = { name: utility.name, params: describeParams(utility, values), at: new Date() };
+    }
     if (state.selectedId !== utility.id) {
       // L'utilisateur a changé d'utilitaire pendant l'exécution : on le prévient sans écraser son écran.
       announce(`${utility.name} : ${outcome.error ? 'échec' : 'terminé'}.`);
@@ -541,6 +547,62 @@
     state.copyTimer = window.setTimeout(() => (els.copy.textContent = COPY_LABEL), 2000);
   }
 
+  /* ---------- Export PDF ---------- */
+
+  /** Réglages utilisés pour l'exécution, en clair (ex. « Réseau à scanner : 192.168.1.0/24 »). */
+  function describeParams(utility, values) {
+    const lines = [];
+    for (const field of utility.fields) {
+      const value = values[field.id];
+      const kind = field.kind.type;
+      // Le texte à traiter (souvent long) et l'adresse e-mail n'ont rien à faire dans un rapport.
+      if (kind === 'text_area' || field.id === 'email') continue;
+      if (kind === 'checkbox') {
+        if (value) lines.push(`${field.label} : oui`);
+      } else if (kind === 'select') {
+        const option = field.kind.options.find((o) => o.value === value);
+        if (option) lines.push(`${field.label} : ${option.label}`);
+      } else if (value !== null && value !== '') {
+        lines.push(`${field.label} : ${value}`);
+      }
+    }
+    return lines;
+  }
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  /**
+   * Exporte le résultat en PDF : on construit une feuille de rapport (titre, date, réglages,
+   * résultat) qui n'est visible qu'à l'impression, puis on ouvre la fenêtre d'impression du
+   * système, où l'on choisit « Enregistrer au format PDF ». Le rendu est celui de la fenêtre,
+   * donc toutes les écritures (arabe, chinois, hindi…) s'impriment correctement.
+   */
+  function onExportPdf() {
+    if (!state.lastText || !state.lastRun) return;
+    document.getElementById('print-sheet')?.remove();
+    const { name, params, at } = state.lastRun;
+    const when = at.toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
+    const sheet = h(
+      'section',
+      { id: 'print-sheet', 'aria-hidden': 'true' },
+      h('h1', { text: `Multitool : ${name}` }),
+      h('p', { class: 'print-meta', text: `Résultat du ${when}` }),
+      ...(params.length ? [h('ul', { class: 'print-params' }, ...params.map((line) => h('li', { text: line })))] : []),
+      ...Array.from(els.readoutBody.children).map((node) => node.cloneNode(true)),
+    );
+    document.body.append(sheet);
+    // Le titre de la page sert de nom de fichier proposé par la fenêtre d'impression.
+    const previousTitle = document.title;
+    document.title = `Multitool - ${name} - ${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())} ${pad(at.getHours())}h${pad(at.getMinutes())}`;
+    const cleanUp = () => {
+      window.removeEventListener('afterprint', cleanUp);
+      document.title = previousTitle;
+      sheet.remove();
+    };
+    window.addEventListener('afterprint', cleanUp);
+    window.print();
+  }
+
   /* ---------- Thème ---------- */
 
   function syncThemeControls() {
@@ -570,6 +632,7 @@
     });
     els.form.addEventListener('submit', onSubmit);
     els.copy.addEventListener('click', onCopy);
+    els.pdf.addEventListener('click', onExportPdf);
 
     document.addEventListener('keydown', (event) => {
       const mod = event.ctrlKey || event.metaKey;

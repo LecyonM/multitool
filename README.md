@@ -14,6 +14,7 @@ Logiciel de bureau regroupant plusieurs utilitaires dans une seule interface.
 - [Utilitaires disponibles](#utilitaires-disponibles)
 - [Scanner de réseau et scanner de ports](#scanner-de-réseau-et-scanner-de-ports)
 - [Traducteur](#traducteur)
+- [Exporter un résultat en PDF](#exporter-un-résultat-en-pdf)
 - [Ajouter un utilitaire](#ajouter-un-utilitaire)
 - [Interface et modes d'affichage](#interface-et-modes-daffichage)
 - [Logo](#logo)
@@ -174,6 +175,22 @@ Dossier `crates/utilities/src/modules/translator/`. Traduit un texte entre **65 
 - Pour les essais, la variable d'environnement `MULTITOOL_TRANSLATE_URL` remplace l'adresse du service.
 - **Non vérifié** : un appel réel au service MyMemory (le poste de développement n'a pas accès à internet en dehors de quelques sites) ;
   le format des réponses est celui de sa documentation et testé contre un faux serveur local.
+
+## Exporter un résultat en PDF
+
+Le bouton **Exporter en PDF**, à côté de « Copier le résultat », fonctionne pour tous les utilitaires. Il produit un petit rapport :
+titre (nom de l'utilitaire), date et heure, réglages utilisés (ex. le réseau scanné), puis le résultat (récapitulatif, tableau, texte).
+
+- Il ouvre la fenêtre d'impression du système : choisir **« Enregistrer au format PDF »** (ou « Microsoft Print to PDF » sous Windows) comme imprimante.
+  Le nom de fichier proposé est `Multitool - <outil> - <date et heure>`.
+- Le rapport est toujours noir sur blanc, quel que soit le thème de l'écran ; les tableaux s'étendent sur toute la page, l'en-tête
+  est répété à chaque page et aucune ligne n'est coupée. Le texte long (traduction) garde ses retours à la ligne.
+- Comme le rendu est fait par la fenêtre elle-même, toutes les écritures s'impriment correctement, y compris de droite à gauche
+  (arabe) et le chinois ou le hindi, dans la mesure où une police du système les contient.
+- Le texte à traiter (zone de texte) et l'adresse e-mail ne sont pas repris dans les réglages du rapport.
+- Pour un utilitaire futur : rien à faire, le bouton s'applique à tout résultat affiché. La mise en page d'impression est à la fin de `ui/css/style.css`.
+- **Limite connue** : la fenêtre d'impression elle-même n'a pas pu être essayée sur le poste de développement (la mise en page l'a été
+  en générant de vrais PDF de 1 à 3 pages ; l'application réelle a été testée jusqu'à l'appel d'impression).
 
 ## Ajouter un utilitaire
 
@@ -405,6 +422,10 @@ version écrite dans `src-tauri/tauri.conf.json`). Réglages dans `bundle.window
 ## Journal des modifications
 
 Une entrée par tâche ou modification, la plus récente en premier.
+
+### 2026-11-25
+
+- **Exporter en PDF** (version 0.1.2) : voir [Exporter un résultat en PDF](#exporter-un-résultat-en-pdf). Demandé parce que le texte copié puis collé dans une note ou un document s'alignait mal. Vérifié sur de vrais PDF : les données d'un scan réel de 11 machines, un tableau de 95 lignes sur 3 pages (en-tête répété), une traduction en arabe, chinois et hindi ; puis dans l'application réelle, dans les 4 modes d'affichage.
 
 ### 2026-11-24
 

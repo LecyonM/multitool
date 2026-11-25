@@ -850,3 +850,165 @@ textarea {
 .readout-grid td:last-child {
   padding-right: 4px;
 }
+
+/* ---------- Export PDF ---------- */
+
+.readout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* La feuille de rapport n'existe que pendant l'impression. */
+#print-sheet {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body > *:not(#print-sheet) {
+    display: none !important;
+  }
+
+  #print-sheet {
+    display: block;
+    font: 10.5pt/1.45 "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #000;
+  }
+
+  /* Papier blanc, encre noire : quel que soit le thème choisi à l'écran. */
+  #print-sheet * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    animation: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #print-sheet h1 {
+    margin: 0 0 2pt;
+    font-size: 17pt;
+    line-height: 1.2;
+  }
+
+  #print-sheet .print-meta {
+    margin: 0 0 8pt;
+    color: #444 !important;
+    font-size: 9.5pt;
+  }
+
+  #print-sheet .print-params {
+    margin: 0 0 12pt;
+    padding: 0 0 8pt 0;
+    list-style: none;
+    border-bottom: 1px solid #999;
+    font-size: 9.5pt;
+  }
+
+  #print-sheet .print-params li {
+    margin: 0;
+  }
+
+  /* Récapitulatif libellé / valeur */
+  #print-sheet .readout-table {
+    display: block;
+    margin: 0 0 12pt;
+  }
+
+  #print-sheet .readout-table .row {
+    display: flex !important;
+    gap: 10pt;
+    padding: 2pt 0;
+    border-bottom: 1px dotted #bbb;
+    break-inside: avoid;
+  }
+
+  #print-sheet .readout-table dt {
+    flex: 0 0 38%;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  #print-sheet .readout-table dd {
+    flex: 1;
+    margin: 0;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: 400 !important;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+  }
+
+  /* Tableau de résultats : toute la largeur, en-tête répété sur chaque page */
+  #print-sheet .readout-grid {
+    overflow: visible !important;
+    max-height: none !important;
+    margin: 0 0 12pt;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  #print-sheet .readout-grid table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+  }
+
+  #print-sheet .readout-grid thead {
+    display: table-header-group;
+  }
+
+  #print-sheet .readout-grid tr {
+    break-inside: avoid;
+  }
+
+  #print-sheet .readout-grid th,
+  #print-sheet .readout-grid td {
+    padding: 3pt 6pt;
+    border: 1px solid #999;
+    text-align: left;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    font-family: "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  #print-sheet .readout-grid th {
+    background: #e6e6e6 !important;
+    font-family: inherit;
+    font-weight: 700;
+  }
+
+  #print-sheet .readout-grid tbody tr:nth-child(even) td {
+    background: #f4f4f4 !important;
+  }
+
+  /* Texte libre (traduction, remarques) : retours à la ligne conservés, jamais coupé */
+  #print-sheet .readout-text {
+    margin: 0 0 10pt;
+    padding: 0 !important;
+    border: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: inherit;
+    font-size: 10.5pt;
+    /* Chaque paragraphe prend le sens de son écriture (arabe, hébreu : de droite à gauche). */
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+}

@@ -1,12 +1,12 @@
 [workspace]
 resolver = "2"
-members = ["crates/core", "crates/utilities", "src-tauri"]
+members = ["crates/core", "crates/utilities", "crates/export", "src-tauri"]
 # `cargo test` à la racine ne compile que le noyau et les utilitaires :
 # pas besoin des dépendances système de Tauri pour tester la logique.
-default-members = ["crates/core", "crates/utilities"]
+default-members = ["crates/core", "crates/utilities", "crates/export"]
 
 [workspace.package]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 
 [workspace.dependencies]

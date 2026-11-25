@@ -1,0 +1,10 @@
+[package]
+name = "multitool-export"
+description = "Export des résultats de Multitool en document PDF"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+multitool-core = { path = "../core" }
+genpdf = "0.2"
+ttf-parser = "0.25"
